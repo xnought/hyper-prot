@@ -7,13 +7,18 @@ Extending protein search for many proteins vs. many other proteins. Visualized w
 ## TODO
 
 - [ ] Experiment
-     - [ ] Use foldseek in python
-     - [ ] Use foldseek on many proteins in python
+     - [x] Use foldseek in python
+     - [ ] Use foldseek on external database PDB for single-many search
      - [ ] Visualize a graph of the proteins
-     - [ ] Go deeper into the graph n nodes
-     - [ ] Visualize hypergraph somehow
-     - [ ] See if I can extract insights from the extracted graph or chat with it
-- [ ] Come up with more todos
+     - [ ] Use foldseek on external database PDB for many-many search
+     - [ ] Visualize a graph of the proteins (By Friday)
+     - [ ] Extend the graph to similar of similar, ...
+     - [ ] Visualize hypergraph somehow to simplify things
+     - [ ] Parse the output graph with paper, bio data, structure from PDB
+     - [ ] Use Graph RAG on the structures and paper to come up with function hypotheses (by Monday)
+- [ ] Create user interface for anyone to use this process (By next Friday)
+- [ ] Write the paper (By next Monday)
+
 
 
 ## Development
