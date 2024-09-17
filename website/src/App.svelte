@@ -2,49 +2,23 @@
 	import { onMount } from "svelte";
 	import "./app.css";
 	import Header from "./components/Header.svelte";
+	import Graph from "./components/Graph.svelte";
+	import type { Link, Node } from "./types";
 
-	import * as myc from "@apple/mycelium";
-	import "@apple/mycelium/dist/style.css";
-
-	let el: HTMLDivElement;
-	let viewer: myc.NetworkViewer;
+	let d: GraphData;
+	let links: Link[] = [];
+	let nodes: Node[] = [];
 	onMount(async () => {
-		const d = await loadGraphData();
-		const network = new myc.Network();
-		setGraph(network, d);
-		viewer = myc.NetworkViewer.create(network, el, {
-			showBreadcrumbs: true,
-			minimap: true,
-		});
+		d = await loadGraphData();
+		const res = convertFormat(d);
+		links = res[0];
+		nodes = res[1];
 	});
 
-	function setGraph(network: myc.Network, data: GraphData) {
-		// set nodes
-		for (let i = 0; i < data.nodes.length; i++) {
-			const nodeId = data.nodes[i];
-			const node = createNode(nodeId);
-			network.setNode(nodeId, node);
-		}
-
-		// set edges
-		for (let i = 0; i < data.edges.length; i++) {
-			const edge = data.edges[i];
-			if (edge[2] === 1) {
-				network.setEdge(edge[0], edge[1]);
-			}
-		}
+	interface GraphData {
+		nodes: string[];
+		edges: unknown[][];
 	}
-
-	function createNode(nodeId: any) {
-		return new myc.ui.Node(
-			nodeId,
-			new myc.ui.VStack(
-				new myc.ui.Text("Node").with({ fontWeight: 600 }),
-				new myc.ui.Text(nodeId)
-			)
-		);
-	}
-
 	interface GraphData {
 		nodes: string[];
 		edges: unknown[][];
@@ -55,14 +29,35 @@
 		const j = await d.json();
 		return j as GraphData;
 	}
+
+	function convertFormat(data: GraphData): [Link[], Node[]] {
+		let nodes: Node[] = [];
+		let links: Link[] = [];
+
+		for (const n of data.nodes) {
+			nodes.push({ id: n, group: 1 });
+		}
+		for (const e of data.edges) {
+			const [source, target, value] = e;
+			if (value > 0.1) {
+				links.push({ source, target, value, weight: value });
+			}
+		}
+
+		let results = jLouvain().nodes(data.nodes).edges(links)();
+		for (const n of nodes) {
+			n["group"] = results[n.id];
+		}
+
+		return [links, nodes];
+	}
 </script>
 
 <Header />
 <main>
-	<div
-		bind:this={el}
-		style="width: 100vw; height: 800px; outline: 1px solid red;"
-	/>
+	{#if links.length > 0 && nodes.length > 0}
+		<Graph width={1000} height={800} {links} {nodes} />
+	{/if}
 </main>
 
 <style>
