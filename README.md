@@ -9,9 +9,8 @@ Extending protein search for many proteins vs. many other proteins. Visualized w
 - [ ] Experiment
      - [x] Use foldseek in python
      - [x] Visualize a graph of the proteins
-     - [ ] On click of a protein, show another graph with extrnal DB search
-     - [ ] Display labels or way to view which protein is which
-     - [ ] Display foldseek and alignment data somehow
+     - [ ] Select group on click
+     - [ ] Query PDB for the clicked group
      - [ ] Parse the output graph with paper, bio data, structure from PDB
      - [ ] Use Graph RAG on the structures and paper to come up with function hypotheses (by Monday)
 - [ ] Create user interface for anyone to use this process (By next Friday)
