@@ -5,36 +5,19 @@
 	import Graph from "./components/Graph.svelte";
 	import type { Link, Node } from "./types";
 	import { Backend } from "./backend";
+	import type { WithinSimilarResponse } from "./backend";
 
-	let d: GraphData;
+	let d: WithinSimilarResponse;
 	let links: Link[] = [];
 	let nodes: Node[] = [];
 	onMount(async () => {
-		d = await loadGraphData();
+		d = await Backend.withinSimilar();
 		const res = convertFormat(d);
 		links = res[0];
 		nodes = res[1];
-
-		const out = await Backend.withinSimilar();
-		console.log(out);
 	});
 
-	interface GraphData {
-		nodes: string[];
-		edges: unknown[][];
-	}
-	interface GraphData {
-		nodes: string[];
-		edges: unknown[][];
-	}
-
-	async function loadGraphData() {
-		const d = await fetch("shared/test.json");
-		const j = await d.json();
-		return j as GraphData;
-	}
-
-	function convertFormat(data: GraphData): [Link[], Node[]] {
+	function convertFormat(data: WithinSimilarResponse): [Link[], Node[]] {
 		let nodes: Node[] = [];
 		let links: Link[] = [];
 
@@ -43,17 +26,28 @@
 		}
 		for (const e of data.edges) {
 			const [source, target, value] = e;
+			//@ts-ignore
 			if (value > 0.1) {
+				//@ts-ignore
 				links.push({ source, target, value, weight: value });
 			}
 		}
 
-		let results = jLouvain().nodes(data.nodes).edges(links)();
+		//@ts-ignore
+		const results = detectCommunities(data.nodes, links);
 		for (const n of nodes) {
 			n["group"] = results[n.id];
 		}
 
 		return [links, nodes];
+	}
+
+	function detectCommunities(
+		nodes: string[],
+		links: { source: string; target: string; weight: number }[]
+	): Record<string, number> {
+		//@ts-ignore
+		return jLouvain().nodes(nodes).edges(links)();
 	}
 </script>
 

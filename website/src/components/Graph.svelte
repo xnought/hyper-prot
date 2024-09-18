@@ -19,6 +19,7 @@
 		{ source: "e", target: "d", value: 1 },
 		{ source: "c", target: "a", value: 4 },
 	];
+	let selected = {};
 
 	/**
 	 * most of this is from [ObservableHQ](https://observablehq.com/@d3/disjoint-force-directed-graph/2?intent=fork)
@@ -67,7 +68,10 @@
 				"fill",
 				(d) =>
 					d3.schemeTableau10.concat(d3.schemeCategory10)[d.group % 20]
-			);
+			)
+			.on("click", (e, d) => {
+				selected = d;
+			});
 
 		function update() {
 			const x = "x";
@@ -134,6 +138,7 @@
 
 <div>
 	<svg bind:this={svgEl} {width} {height} />
+	{JSON.stringify(selected, null, 4)}
 </div>
 
 <style>

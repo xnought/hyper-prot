@@ -4,6 +4,6 @@
 /* eslint-disable */
 export type WithinSimilarResponse = {
     nodes: Array<string>;
-    edges: Array<string>;
+    edges: Array<Array<any>>;
 };
 
