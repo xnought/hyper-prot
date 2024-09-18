@@ -4,6 +4,7 @@
 	import Header from "./components/Header.svelte";
 	import Graph from "./components/Graph.svelte";
 	import type { Link, Node } from "./types";
+	import { Backend } from "./backend";
 
 	let d: GraphData;
 	let links: Link[] = [];
@@ -13,6 +14,9 @@
 		const res = convertFormat(d);
 		links = res[0];
 		nodes = res[1];
+
+		const out = await Backend.withinSimilar();
+		console.log(out);
 	});
 
 	interface GraphData {
